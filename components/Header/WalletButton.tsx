@@ -307,7 +307,7 @@ function AccountDetail({ onClose }: { onClose?: () => void }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center text-xs text-gray-300 xsm:text-sm">
           {currentWallet?.metadata?.iconUrl && (
-            <span className="mr-1">
+            <span className="mr-1" style={{ marginLeft: -2 }}>
               <img src={currentWallet.metadata.iconUrl} className="w-3 h-3 mr-1" alt="" />
             </span>
           )}
