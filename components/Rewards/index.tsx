@@ -12,6 +12,8 @@ import TokenIcon from "../TokenIcon";
 import HtmlTooltip from "../common/html-tooltip";
 import { useNetLiquidityRewards, useProRataNetLiquidityReward } from "../../hooks/useRewards";
 import { toInternationalCurrencySystem_number } from "../../utils/uiNumber";
+import { nearNativeTokens } from "../../utils/index";
+import { nearMetadata } from "../Assets";
 
 interface Props {
   rewards?: IReward[];
@@ -250,21 +252,25 @@ const TotalDailyRewards = ({ poolRewards, netLiquidityRewards, tokenId }) => {
   let total = "0";
   if (poolRewards) {
     const { metadata, rewards, config } = poolRewards;
-    const { decimals, icon } = metadata;
+    const { decimals, icon, token_id } = metadata;
     poolDailyRewards = shrinkToken(rewards.reward_per_day || 0, decimals + config.extra_decimals);
     if (icon) {
       src = icon;
+    } else if (nearNativeTokens.includes(token_id)) {
+      src = nearMetadata.icon;
     }
   }
   if (netLiquidityRewards) {
     const { metadata, rewards, config } = netLiquidityRewards;
-    const { decimals, icon } = metadata;
+    const { decimals, icon, token_id } = metadata;
     netLiquidityDailyRewards = shrinkToken(
       rewards.reward_per_day || 0,
       decimals + config.extra_decimals,
     );
     if (icon) {
       src = icon;
+    } else if (nearNativeTokens.includes(token_id)) {
+      src = nearMetadata.icon;
     }
   }
   const netLiquidityDailyRewardsForToken = useProRataNetLiquidityReward(
