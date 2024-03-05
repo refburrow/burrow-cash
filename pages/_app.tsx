@@ -87,11 +87,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             <title>Burrow Finance</title>
           </Head>
           <Layout>
+            <Popup className="lg:hidden" />
             <Init />
             <Modal />
             <ToastMessage />
             <Component {...pageProps} />
-            <Popup />
+            <Popup className="xsm:hidden" />
           </Layout>
         </PersistGate>
       </Provider>

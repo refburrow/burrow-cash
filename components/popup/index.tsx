@@ -7,7 +7,7 @@ import { incentiveTokens } from "../../utils/config";
 import ClaimAllRewards from "../ClaimAllRewards";
 import { isMobileDevice } from "../../helpers/helpers";
 
-const Popup = () => {
+const Popup = ({ className }) => {
   const INCENTIVE_POPUP_STATUS = localStorage.getItem("INCENTIVE_POPUP_STATUS");
   const joinedText = "Join the new farm to get more rewards. For more details, refer to";
   const noJoinedText =
@@ -45,51 +45,53 @@ const Popup = () => {
   }
   if (!show) return null;
   return (
-    <div className="lg:fixed lg:right-0 lg:bottom-8 xsm:relative">
-      {isMobileDevice() ? <BoxMobileSvg /> : <BoxSvg />}
-      <CloseButton
-        className="absolute cursor-pointer top-3 right-6 xsm:right-3 z-50"
-        onClick={closePopup}
-      />
-      <div className="absolute content w-[340px] h-[200px] lg:top-[50px] xsm:top-[25px] left-[20px] px-[20px]">
-        <p className="text-gray-300 text-sm pt-[80px]">
-          {status === 0 ? noJoinedText : joinedText}
-          <a href="https://burrow.finance/" className="underline cursor-pointer ml-0.5">
-            @burrow_finance.
-          </a>
-        </p>
-        {status === 0 ? (
-          <div className="w-full flex items-center justify-center gap-2 mt-2">
-            <Button
-              classInfo="text-white bg-blue-100 cursor-pointer"
-              onClick={() => {
-                jump(incentiveTokens[0]);
-              }}
-            >
-              Supply USDC
+    <div className="flex justify-center">
+      <div className={twMerge(className || "", "lg:fixed lg:right-0 lg:bottom-8 xsm:relative")}>
+        {isMobileDevice() ? <BoxMobileSvg /> : <BoxSvg />}
+        <CloseButton
+          className="absolute cursor-pointer top-3 right-6 xsm:right-2 z-50"
+          onClick={closePopup}
+        />
+        <div className="absolute content w-[340px] h-[200px] lg:top-[50px] xsm:top-[25px] left-[20px] px-[20px]">
+          <p className="text-gray-300 text-sm pt-[80px]">
+            {status === 0 ? noJoinedText : joinedText}
+            <a href="https://burrow.finance/" className="underline cursor-pointer ml-0.5">
+              @burrow_finance.
+            </a>
+          </p>
+          {status === 0 ? (
+            <div className="w-full flex items-center justify-center gap-2 mt-2">
+              <Button
+                classInfo="text-white bg-blue-100 cursor-pointer"
+                onClick={() => {
+                  jump(incentiveTokens[0]);
+                }}
+              >
+                Supply USDC
+              </Button>
+              <Button
+                classInfo="text-white bg-green-50 cursor-pointer"
+                onClick={() => {
+                  jump(incentiveTokens[1]);
+                }}
+              >
+                Supply USDT
+              </Button>
+            </div>
+          ) : null}
+          {status === 1 ? (
+            <ClaimAllRewards
+              location="non-farmed-assets"
+              Button={ClaimButton}
+              disabled={hasNegativeNetLiquidity}
+            />
+          ) : null}
+          {status === 2 ? (
+            <Button classInfo="float-right transform translate-y-2 text-dark-200 bg-gray-950 cursor-not-allowed">
+              Joined
             </Button>
-            <Button
-              classInfo="text-white bg-green-50 cursor-pointer"
-              onClick={() => {
-                jump(incentiveTokens[1]);
-              }}
-            >
-              Supply USDT
-            </Button>
-          </div>
-        ) : null}
-        {status === 1 ? (
-          <ClaimAllRewards
-            location="non-farmed-assets"
-            Button={ClaimButton}
-            disabled={hasNegativeNetLiquidity}
-          />
-        ) : null}
-        {status === 2 ? (
-          <Button classInfo="float-right transform translate-y-2 text-dark-200 bg-gray-950 cursor-not-allowed">
-            Joined
-          </Button>
-        ) : null}
+          ) : null}
+        </div>
       </div>
     </div>
   );

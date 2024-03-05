@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import NonFarmedAssets from "../NonFarmedAssets";
-import Popup from "../popup";
 
 type Props = {
   children: string | React.ReactNode;
@@ -43,7 +42,6 @@ export const LayoutBox = ({ children, className = "" }: Props) => {
       <div className="xsm:hidden lg:w-full">
         <NonFarmedAssets />
       </div>
-      <Popup />
       {children}
     </div>
   );
