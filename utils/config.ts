@@ -21,6 +21,10 @@ export const WALLET_CONNECT_ID =
   process.env.NEXT_PUBLIC_WALLET_CONNECT_ID || ("87e549918631f833447b56c15354e450" as string);
 
 export const missingPriceTokens = [REF_TOKEN, META_TOKEN, BRRR_TOKEN];
+export const incentiveTokens = [
+  "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+  "usdt.tether-token.near",
+];
 const getConfig = (env: string = defaultNetwork) => {
   switch (env) {
     case "production":
