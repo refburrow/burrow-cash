@@ -55,12 +55,12 @@ const Popup = ({ className }) => {
         <div className="absolute content w-[340px] h-[200px] lg:top-[50px] xsm:top-[25px] left-[20px] px-[20px]">
           <p className="text-gray-300 text-sm pt-[80px]">
             {status === 1 ? joinedText : noJoinedText}
-            <a
+            {/* <a
               href="https://burrow.finance/"
               className="underline cursor-pointer ml-0.5 underline-offset-4 inline-block"
             >
               @burrow_finance.
-            </a>
+            </a> */}
           </p>
           {status === 0 || status === 2 ? (
             <div className="w-full flex items-center justify-center gap-2 mt-2">
@@ -105,7 +105,7 @@ const ClaimButton = (props) => {
   return (
     <Button
       {...props}
-      classInfo="float-right transform -translate-y-3 text-dark-200 bg-primary cursor-pointer"
+      classInfo="float-right transform translate-y-2 text-dark-200 bg-primary cursor-pointer"
     >
       {loading ? <BeatLoader size={5} color="#14162B" /> : <>Claim & Join</>}
     </Button>
