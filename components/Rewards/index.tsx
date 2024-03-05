@@ -226,18 +226,18 @@ const RewardsTooltipV2 = ({ children, hidden, poolRewards, netLiquidityRewards, 
 const RewardV2 = ({ metadata, rewards, config, tokenId }) => {
   const { fullDigits } = useFullDigits();
   const isCompact = fullDigits?.table;
-  const { symbol, icon, decimals } = metadata;
+  const { token_id, icon, decimals } = metadata;
   const dailyRewards = shrinkToken(rewards.reward_per_day || 0, decimals + config.extra_decimals);
   const rewardAmount = useProRataNetLiquidityReward(tokenId, dailyRewards);
 
   const amount = isCompact
     ? millify(Number(rewardAmount), { precision: PERCENT_DIGITS })
     : formatRewardAmount(Number(rewardAmount));
-
+  const processed_icon = icon || nearNativeTokens.includes(token_id) ? nearMetadata.icon : "";
   return (
     <div className="flex items-center gap-1">
       <Stack key={1} direction="row" alignItems="center" spacing={1}>
-        <img className="w-4 h-4 rounded-full" alt="" src={icon} />
+        <img className="w-4 h-4 rounded-full" alt="" src={processed_icon} />
       </Stack>
       <Typography key={2} fontSize="0.75rem" textAlign="right">
         {amount} / day

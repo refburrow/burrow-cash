@@ -9,9 +9,10 @@ import { isMobileDevice } from "../../helpers/helpers";
 
 const Popup = ({ className }) => {
   const INCENTIVE_POPUP_STATUS = localStorage.getItem("INCENTIVE_POPUP_STATUS");
-  const joinedText = "Join the new farm to get more rewards. For more details, refer to";
+  const joinedText =
+    "If you have contributed liquidity to USDC or USDT, please click “Claim & Join” to join the new incentives for these assets.";
   const noJoinedText =
-    "Supply USDC or USDT native tokens to join the new farm. For more details, refer to ";
+    "You can participate in the incentive program by supplying USDC native or USDT native.";
   const [show, setShow] = useState<boolean>(false);
   const { hasNonFarmedAssets, hasNegativeNetLiquidity } = useNonFarmedAssets();
   const needJoinAndClaim = useMemo(() => {
@@ -28,7 +29,6 @@ const Popup = ({ className }) => {
     if (haveSupplied) return 2;
     return 0;
   }, [needJoinAndClaim, accountId, suppliedRows]);
-  // const status = 2;
   useEffect(() => {
     if (INCENTIVE_POPUP_STATUS === "1") {
       setShow(false);
@@ -54,15 +54,15 @@ const Popup = ({ className }) => {
         />
         <div className="absolute content w-[340px] h-[200px] lg:top-[50px] xsm:top-[25px] left-[20px] px-[20px]">
           <p className="text-gray-300 text-sm pt-[80px]">
-            {status === 0 ? noJoinedText : joinedText}
+            {status === 1 ? joinedText : noJoinedText}
             <a
               href="https://burrow.finance/"
-              className="underline cursor-pointer ml-0.5 underline-offset-4"
+              className="underline cursor-pointer ml-0.5 underline-offset-4 inline-block"
             >
               @burrow_finance.
             </a>
           </p>
-          {status === 0 ? (
+          {status === 0 || status === 2 ? (
             <div className="w-full flex items-center justify-center gap-2 mt-2">
               <Button
                 classInfo="text-white bg-blue-100 cursor-pointer"
@@ -89,11 +89,11 @@ const Popup = ({ className }) => {
               disabled={hasNegativeNetLiquidity}
             />
           ) : null}
-          {status === 2 ? (
+          {/* {status === 2 ? (
             <Button classInfo="float-right transform translate-y-2 text-dark-200 bg-gray-950 cursor-not-allowed">
               Joined
             </Button>
-          ) : null}
+          ) : null} */}
         </div>
       </div>
     </div>
@@ -105,7 +105,7 @@ const ClaimButton = (props) => {
   return (
     <Button
       {...props}
-      classInfo="float-right transform translate-y-2 text-dark-200 bg-primary cursor-pointer"
+      classInfo="float-right transform -translate-y-3 text-dark-200 bg-primary cursor-pointer"
     >
       {loading ? <BeatLoader size={5} color="#14162B" /> : <>Claim & Join</>}
     </Button>
