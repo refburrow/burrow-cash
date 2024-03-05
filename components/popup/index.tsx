@@ -9,10 +9,9 @@ import { isMobileDevice } from "../../helpers/helpers";
 
 const Popup = () => {
   const INCENTIVE_POPUP_STATUS = localStorage.getItem("INCENTIVE_POPUP_STATUS");
-  const joinedText =
-    "You have participated in the liquidity of USDT, please click ‘Claim & Join’ to join the new farm. For more details, refer to";
+  const joinedText = "Join the new farm to get more rewards. For more details, refer to";
   const noJoinedText =
-    "You can participate by supplying USDC native, or USDT native. For more details, refer to";
+    "Supply USDC or USDT native tokens to join the new farm. For more details, refer to ";
   const [show, setShow] = useState<boolean>(false);
   const { hasNonFarmedAssets, hasNegativeNetLiquidity } = useNonFarmedAssets();
   const needJoinAndClaim = useMemo(() => {
@@ -46,9 +45,12 @@ const Popup = () => {
   }
   if (!show) return null;
   return (
-    <div className="lg:fixed lg:right-0 lg:bottom-10 xsm:relative">
+    <div className="lg:fixed lg:right-0 lg:bottom-8 xsm:relative">
       {isMobileDevice() ? <BoxMobileSvg /> : <BoxSvg />}
-      <CloseButton className="absolute cursor-pointer top-3 right-6" onClick={closePopup} />
+      <CloseButton
+        className="absolute cursor-pointer top-3 right-6 xsm:right-3 z-50"
+        onClick={closePopup}
+      />
       <div className="absolute content w-[340px] h-[200px] lg:top-[50px] xsm:top-[25px] left-[20px] px-[20px]">
         <p className="text-gray-300 text-sm pt-[80px]">
           {status === 0 ? noJoinedText : joinedText}
@@ -84,7 +86,7 @@ const Popup = () => {
           />
         ) : null}
         {status === 2 ? (
-          <Button classInfo="float-right transform -translate-y-3 text-dark-200 bg-gray-950 cursor-not-allowed">
+          <Button classInfo="float-right transform translate-y-2 text-dark-200 bg-gray-950 cursor-not-allowed">
             Joined
           </Button>
         ) : null}
@@ -98,7 +100,7 @@ const ClaimButton = (props) => {
   return (
     <Button
       {...props}
-      classInfo="float-right transform -translate-y-3 text-dark-200 bg-primary cursor-pointer"
+      classInfo="float-right transform translate-y-2 text-dark-200 bg-primary cursor-pointer"
     >
       {loading ? <BeatLoader size={5} color="#14162B" /> : <>Claim & Join</>}
     </Button>
