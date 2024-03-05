@@ -55,7 +55,10 @@ const Popup = ({ className }) => {
         <div className="absolute content w-[340px] h-[200px] lg:top-[50px] xsm:top-[25px] left-[20px] px-[20px]">
           <p className="text-gray-300 text-sm pt-[80px]">
             {status === 0 ? noJoinedText : joinedText}
-            <a href="https://burrow.finance/" className="underline cursor-pointer ml-0.5">
+            <a
+              href="https://burrow.finance/"
+              className="underline cursor-pointer ml-0.5 underline-offset-4"
+            >
               @burrow_finance.
             </a>
           </p>
