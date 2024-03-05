@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import NonFarmedAssets from "../NonFarmedAssets";
+import Popup from "../popup";
 
 type Props = {
   children: string | React.ReactNode;
@@ -39,9 +40,10 @@ export const LayoutBox = ({ children, className = "" }: Props) => {
     <div
       className={`mx-auto lg:min-w-[800px] xl:max-w-[1200px] xsm:w-full xsm:overflow-x-hidden ${className}`}
     >
-      <div className="xsm:mx-4 lg:w-full">
+      <div className="xsm:hidden lg:w-full">
         <NonFarmedAssets />
       </div>
+      <Popup />
       {children}
     </div>
   );
