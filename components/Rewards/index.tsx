@@ -12,6 +12,8 @@ import TokenIcon from "../TokenIcon";
 import HtmlTooltip from "../common/html-tooltip";
 import { useNetLiquidityRewards, useProRataNetLiquidityReward } from "../../hooks/useRewards";
 import { toInternationalCurrencySystem_number } from "../../utils/uiNumber";
+import { nearNativeTokens } from "../../utils/index";
+import { nearMetadata } from "../Assets";
 
 interface Props {
   rewards?: IReward[];
@@ -224,18 +226,18 @@ const RewardsTooltipV2 = ({ children, hidden, poolRewards, netLiquidityRewards, 
 const RewardV2 = ({ metadata, rewards, config, tokenId }) => {
   const { fullDigits } = useFullDigits();
   const isCompact = fullDigits?.table;
-  const { symbol, icon, decimals } = metadata;
+  const { token_id, icon, decimals } = metadata;
   const dailyRewards = shrinkToken(rewards.reward_per_day || 0, decimals + config.extra_decimals);
   const rewardAmount = useProRataNetLiquidityReward(tokenId, dailyRewards);
 
   const amount = isCompact
     ? millify(Number(rewardAmount), { precision: PERCENT_DIGITS })
     : formatRewardAmount(Number(rewardAmount));
-
+  const processed_icon = icon || nearNativeTokens.includes(token_id) ? nearMetadata.icon : "";
   return (
     <div className="flex items-center gap-1">
       <Stack key={1} direction="row" alignItems="center" spacing={1}>
-        <img className="w-4 h-4 rounded-full" alt="" src={icon} />
+        <img className="w-4 h-4 rounded-full" alt="" src={processed_icon} />
       </Stack>
       <Typography key={2} fontSize="0.75rem" textAlign="right">
         {amount} / day
@@ -250,21 +252,25 @@ const TotalDailyRewards = ({ poolRewards, netLiquidityRewards, tokenId }) => {
   let total = "0";
   if (poolRewards) {
     const { metadata, rewards, config } = poolRewards;
-    const { decimals, icon } = metadata;
+    const { decimals, icon, token_id } = metadata;
     poolDailyRewards = shrinkToken(rewards.reward_per_day || 0, decimals + config.extra_decimals);
     if (icon) {
       src = icon;
+    } else if (nearNativeTokens.includes(token_id)) {
+      src = nearMetadata.icon;
     }
   }
   if (netLiquidityRewards) {
     const { metadata, rewards, config } = netLiquidityRewards;
-    const { decimals, icon } = metadata;
+    const { decimals, icon, token_id } = metadata;
     netLiquidityDailyRewards = shrinkToken(
       rewards.reward_per_day || 0,
       decimals + config.extra_decimals,
     );
     if (icon) {
       src = icon;
+    } else if (nearNativeTokens.includes(token_id)) {
+      src = nearMetadata.icon;
     }
   }
   const netLiquidityDailyRewardsForToken = useProRataNetLiquidityReward(
