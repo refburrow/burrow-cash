@@ -170,6 +170,7 @@ const SupplyItem = ({ data }) => {
             baseAPY={data?.apy}
             page="deposit"
             tokenId={data?.tokenId}
+            onlyMarket
           />
         </ItemRow>
         <ItemRow label="Rewards">
@@ -228,6 +229,7 @@ const BorrowItem = ({ data }) => {
             baseAPY={data?.borrowApy}
             page="borrow"
             tokenId={data?.tokenId}
+            onlyMarket
           />
         </ItemRow>
         <ItemRow label="Rewards">
