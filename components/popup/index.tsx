@@ -96,7 +96,7 @@ const Popup = ({ className }) => {
             </a> */}
 
           {status === 0 || status === 2 ? (
-            <div className="w-[114%] flex items-center justify-center gap-2 mt-2 -ml-2">
+            <div className="lg:w-[114%] xsm:w-[115%] flex items-center justify-center gap-2 mt-2 -ml-2">
               <Button
                 classInfo="text-white bg-blue-100 cursor-pointer"
                 onClick={() => {
