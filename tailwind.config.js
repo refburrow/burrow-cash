@@ -53,6 +53,10 @@ module.exports = {
         danger: "#FF68A7",
         blue: {
           50: "#45AFFF",
+          100: "#398FED",
+        },
+        green: {
+          50: "#00B4B4",
         },
         dark: {
           50: "#31344D",
@@ -90,6 +94,8 @@ module.exports = {
           700: "#494D69",
           800: "#23253A",
           900: "#0f101c",
+          950: "#787B93",
+          1000: "#3A3A3A",
         },
         toolTipBoxBorderColor: "#D2FF3A",
         toolTipBoxBgColor: "rgba(35,37,58,0.8)",

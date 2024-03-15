@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TableProps } from "../../components/Table";
-import { ArrowDownIcon, ArrowUpIcon, ArrowLineDownIcon, CheckIcon, NewTagIcon } from "./svg";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ArrowLineDownIcon,
+  CheckIcon,
+  NewTagIcon,
+  BoosterIcon,
+} from "./svg";
 import type { UIAsset } from "../../interfaces";
 import { isMobileDevice } from "../../helpers/helpers";
 import { useAPY } from "../../hooks/useAPY";
@@ -12,7 +19,7 @@ import {
   isInvalid,
 } from "../../utils/uiNumber";
 import { APYCell } from "./APYCell";
-import getConfig from "../../utils/config";
+import getConfig, { incentiveTokens } from "../../utils/config";
 
 function MarketsTable({ rows, sorting }: TableProps) {
   return (
@@ -120,7 +127,7 @@ function HeadMobile({ sorting }) {
       <div className="flex items-center">
         <span className="text-gray-300 text-sm mr-2.5">Sort by</span>
         {/* eslint-disable-next-line jsx-a11y/tabindex-no-positive */}
-        <div className="relative" onBlur={closeSelectBox} tabIndex={1}>
+        <div className="relative z-50" onBlur={closeSelectBox}>
           <div
             onClick={handleSelectBox}
             className="flex gap-2.5 items-center justify-center bg-gray-800 border border-dark-50 rounded-md px-2.5 py-1.5 text-sm text-white"
@@ -195,8 +202,20 @@ function TableBody({ rows, sorting }: TableProps) {
       }
     }
     if (order === "desc") {
+      if (incentiveTokens.includes(a.tokenId)) {
+        a_comparator_value = 99999999999999;
+      }
+      if (incentiveTokens.includes(b.tokenId)) {
+        b_comparator_value = 999999999999999;
+      }
       return a_comparator_value - b_comparator_value;
     } else {
+      if (incentiveTokens.includes(a.tokenId)) {
+        a_comparator_value = -99999999999999;
+      }
+      if (incentiveTokens.includes(b.tokenId)) {
+        b_comparator_value = -999999999999999;
+      }
       return b_comparator_value - a_comparator_value;
     }
   }
@@ -333,7 +352,7 @@ function TableRowPc({
           )}
         </div>
         <div className="col-span-1 flex flex-col justify-center pl-6 xl:pl-14 whitespace-nowrap">
-          <span className="text-sm text-white">
+          <span className="flex items-center gap-2 text-sm text-white">
             {row.can_deposit ? (
               <APYCell
                 rewards={row.depositRewards}
@@ -345,6 +364,7 @@ function TableRowPc({
             ) : (
               "-"
             )}
+            {incentiveTokens.includes(row.tokenId) ? <BoosterTag /> : null}
           </span>
         </div>
         <div className="col-span-1 flex flex-col justify-center pl-6 xl:pl-14 whitespace-nowrap">
@@ -430,11 +450,12 @@ function TableRowMobile({
             value={toInternationalCurrencySystem_number(row.totalSupply)}
             subValue={toInternationalCurrencySystem_usd(row.totalSupplyMoney)}
           />
-          {/* <TemplateMobile
+          <TemplateMobileAPY
             title="Supply APY"
-            value={row.can_deposit ? format_apy(depositAPY) : "-"}
-          /> */}
-          <TemplateMobileAPY title="Supply APY" row={row} canShow={row.can_deposit} />
+            row={row}
+            canShow={row.can_deposit}
+            booster={incentiveTokens.includes(row.tokenId)}
+          />
           <TemplateMobile
             title="Total Borrowed"
             value={row.can_borrow ? toInternationalCurrencySystem_number(row.totalBorrowed) : "-"}
@@ -487,11 +508,11 @@ function TemplateMobile({
     </div>
   );
 }
-function TemplateMobileAPY({ title, row, canShow }) {
+function TemplateMobileAPY({ title, row, canShow, booster }) {
   return (
     <div className="flex flex-col">
       <span className="text-gray-300 text-sm">{title}</span>
-      <div className="flex items-center mt-1">
+      <div className="flex items-center mt-1 gap-2">
         {canShow ? (
           <APYCell
             rewards={row.depositRewards}
@@ -503,7 +524,16 @@ function TemplateMobileAPY({ title, row, canShow }) {
         ) : (
           <>-</>
         )}
+        {booster ? <BoosterTag /> : null}
       </div>
+    </div>
+  );
+}
+function BoosterTag() {
+  return (
+    <div className="flex items-center justify-center rounded gap-0.5 text-xs text-black font-bold italic h-4 bg-primary px-1.5">
+      <BoosterIcon />
+      Boosted
     </div>
   );
 }

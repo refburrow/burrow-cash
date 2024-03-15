@@ -19,9 +19,13 @@ import { getContract } from "../store";
 import { getWalletSelector, getAccount, functionCall } from "./wallet-selector-compat";
 
 export const getViewAs = () => {
-  const url = new URL(window.location.href.replace("/#", ""));
-  const searchParams = new URLSearchParams(url.search);
-  return searchParams.get("viewAs");
+  if (window.location.href.includes("#instant-url")) {
+    return null;
+  } else {
+    const url = new URL(window.location.href.replace("/#", ""));
+    const searchParams = new URLSearchParams(url.search);
+    return searchParams.get("viewAs");
+  }
 };
 
 interface GetBurrowArgs {
@@ -221,6 +225,7 @@ export function decimalMin(a: string | number | Decimal, b: string | number | De
   b = new Decimal(b);
   return a.lt(b) ? a : b;
 }
+
 export function standardizeAsset(asset) {
   if (asset.symbol === "wNEAR") {
     asset.symbol = nearMetadata.symbol;

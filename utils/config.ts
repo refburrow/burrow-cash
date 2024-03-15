@@ -21,6 +21,11 @@ export const WALLET_CONNECT_ID =
   process.env.NEXT_PUBLIC_WALLET_CONNECT_ID || ("87e549918631f833447b56c15354e450" as string);
 
 export const missingPriceTokens = [REF_TOKEN, META_TOKEN, BRRR_TOKEN];
+export const incentiveTokens = [
+  "853d955acef822db058eb8505911ed77f175b99e.factory.bridge.near",
+  "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+  "usdt.tether-token.near",
+];
 const getConfig = (env: string = defaultNetwork) => {
   switch (env) {
     case "production":
@@ -33,6 +38,7 @@ const getConfig = (env: string = defaultNetwork) => {
         explorerUrl: "https://explorer.mainnet.near.org",
         liquidationUrl: "https://api.data-service.burrow.finance",
         recordsUrl: "https://indexer.ref.finance",
+        txIdApiUrl: "https://api2.nearblocks.io",
         SPECIAL_REGISTRATION_TOKEN_IDS: [
           "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
         ],
@@ -43,6 +49,8 @@ const getConfig = (env: string = defaultNetwork) => {
         NEW_TOKENS: [
           "usdt.tether-token.near",
           "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+          "853d955acef822db058eb8505911ed77f175b99e.factory.bridge.near",
+          "a663b02cf0a4b149d2ad41910cb81e23e1c41c32.factory.bridge.near",
         ],
         PYTH_ORACLE_CONTRACT_ID: "pyth-oracle.near",
       } as unknown as ConnectConfig & {
@@ -59,6 +67,7 @@ const getConfig = (env: string = defaultNetwork) => {
         explorerUrl: "https://explorer.testnet.near.org",
         liquidationUrl: "https://dev.data-service.ref-finance.com",
         recordsUrl: "https://dev-indexer.ref-finance.com",
+        txIdApiUrl: "https://api-testnet.nearblocks.io",
         SPECIAL_REGISTRATION_TOKEN_IDS: [
           "3e2210e1184b45b64c8a434c0a7e7b23cc04ea7eb7a6c3c32520d03d4afcb8af",
         ],
