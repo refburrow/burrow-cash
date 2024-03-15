@@ -9,7 +9,7 @@ import { useRewards } from "../../hooks/useRewards";
 import ClaimAllRewards from "../../components/ClaimAllRewards";
 import ModalHistoryInfo from "./modalHistoryInfo";
 import { modalProps } from "../../interfaces/common";
-import { DangerIcon, QuestionIcon, RecordsIcon } from "../../components/Icons/Icons";
+import { CloseIcon, DangerIcon, QuestionIcon, RecordsIcon } from "../../components/Icons/Icons";
 import CustomTooltips from "../../components/CustomTooltips/CustomTooltips";
 import { useAccountId, useNonFarmedAssets, useUnreadLiquidation } from "../../hooks/hooks";
 import { ProtocolDailyRewards, UserDailyRewards } from "../../components/Header/stats/rewards";
@@ -17,6 +17,7 @@ import { UserLiquidity } from "../../components/Header/stats/liquidity";
 import { APY } from "../../components/Header/stats/apy";
 import { ContentBox } from "../../components/ContentBox/ContentBox";
 import ToolTip from "../../components/ToolTip";
+import CustomModal from "../../components/CustomModal/CustomModal";
 
 const DashboardOverview = ({ suppliedRows, borrowedRows }) => {
   const [modal, setModal] = useState<modalProps>({
@@ -27,6 +28,13 @@ const DashboardOverview = ({ suppliedRows, borrowedRows }) => {
   const rewardsObj = useRewards();
   const { unreadLiquidation, fetchUnreadLiquidation } = useUnreadLiquidation();
   const isMobile = isMobileDevice();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     fetchUnreadLiquidation().then();
@@ -118,8 +126,8 @@ const DashboardOverview = ({ suppliedRows, borrowedRows }) => {
                   {/*  value={rewardsObj?.data?.totalUnClaimUSDDisplay || "$0"} */}
                   {/* /> */}
                   <div className="h6 text-gray-300">Unclaimed Rewards</div>
-                  <div className="flex flex-col items-start lg3:flex-row lg3:items-center lg3:gap-4">
-                    <div className="flex items-center gap-4 my-1">
+                  <div className="items-start lg3:flex-row lg3:items-center lg3:gap-4">
+                    <div className="items-center gap-4 my-1">
                       <div className="h2">{rewardsObj?.data?.totalUnClaimUSDDisplay || "$0"}</div>
                       <div className="flex" style={{ marginRight: 5 }}>
                         {rewardsObj?.brrr?.icon ? (
@@ -154,14 +162,42 @@ const DashboardOverview = ({ suppliedRows, borrowedRows }) => {
 
                     {rewardsObj?.data?.totalUnClaimUSD > 0 && (
                       <div className="mt-1 lg3:mt-0">
-                        <CustomTooltips
+                        {/* <CustomTooltips
                           text={unclaimNodes}
                           style={{
                             width: 170,
                           }}
                         >
                           <ClaimAllRewards Button={ClaimButton} location="dashboard" />
-                        </CustomTooltips>
+                        </CustomTooltips> */}
+                        <div
+                          className="flex items-center justify-center bg-primary rounded-md cursor-pointer text-sm font-bold text-dark-200 hover:opacity-80 w-20 h-8 mt-1.5"
+                          onClick={openModal}
+                        >
+                          Claim
+                        </div>
+                        <CustomModal
+                          title="Claim Rewards"
+                          isOpen={isModalOpen}
+                          onClose={closeModal}
+                          onOutsideClick={closeModal}
+                          className="modal-mobile-bottom modal-history"
+                          width={400}
+                        >
+                          <div>
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="text-gray-300 text-base">NEAR</div>
+                              <div className="flex-grow border-t border-dashed border-gray-300 mx-4" />
+                              <div>0.67</div>
+                            </div>
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="text-gray-300 text-base">NEAR</div>
+                              <div className="flex-grow border-t border-dashed border-gray-300 mx-4" />
+                              <div>0.67</div>
+                            </div>
+                            <ClaimAllRewards Button={ClaimButton} location="dashboard" />
+                          </div>
+                        </CustomModal>
                       </div>
                     )}
                   </div>
@@ -286,7 +322,7 @@ const ClaimButton = (props) => {
   return (
     <div
       {...props}
-      className="flex items-center justify-center bg-primary rounded-md cursor-pointer text-sm font-bold text-dark-200 hover:opacity-80 w-20 h-8"
+      className="flex items-center justify-center bg-primary rounded-md cursor-pointer text-sm font-bold text-dark-200 hover:opacity-80 w-full h-8 mt-1.5"
     >
       {loading ? <BeatLoader size={5} color="#14162B" /> : <>Claim</>}
     </div>
