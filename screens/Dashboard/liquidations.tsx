@@ -88,7 +88,14 @@ const columns = [
     ),
     cell: ({ originalData }) => {
       const { LiquidatedAssets } = originalData || {};
-      return <div>{LiquidatedAssets?.[0]?.data?.isLpToken ? "LP token" : "Single token"}</div>;
+      return (
+        <div>
+          {LiquidatedAssets?.[0]?.data?.isLpToken ||
+          LiquidatedAssets?.[0]?.token_id?.indexOf("shadow_ref_v1") > -1
+            ? "LP token"
+            : "Single token"}
+        </div>
+      );
     },
   },
   {
