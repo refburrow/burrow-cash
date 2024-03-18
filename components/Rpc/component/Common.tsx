@@ -21,10 +21,10 @@ export const displayCurrentRpc = (responseTimeList: any, key: any, inBox?: boole
   if (responseTimeList[key] === -1) {
     return (
       <>
-        <span className="cursor-pointer text-error">
+        <span className="cursor-pointer text-danger">
           {inBox ? <CircleIconLarge /> : <CircleIcon />}
         </span>
-        <label className="text-xs ml-1.5 mr-2.5 cursor-pointer text-error whitespace-nowrap">
+        <label className="text-xs ml-1.5 mr-2.5 cursor-pointer text-danger whitespace-nowrap">
           time out
         </label>
       </>
