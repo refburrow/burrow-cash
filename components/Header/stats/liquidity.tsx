@@ -94,7 +94,7 @@ export const UserLiquidity = () => {
     <Stat
       title="Net Liquidity"
       titleTooltip="Net Liquidity = Your total Supplied - Your total Borrowed"
-      amount={userWeightedNetLiquidityValue}
+      amount={userNetLiquidityValue}
       labels={showLabels ? netLiquidityLabels : []}
       onClick={toggleValues}
     />

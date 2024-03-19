@@ -46,14 +46,14 @@ export const UserDailyRewards = () => {
       },
     ],
   ];
-  const testIcon = netRewards[0].icon;
-  const testIcons = [
-    { src: testIcon },
-    { src: testIcon },
-    { src: testIcon },
-    { src: testIcon },
-    { src: testIcon },
-  ];
+  // const testIcon = netRewards[0].icon;
+  // const testIcons = [
+  //   { src: testIcon },
+  //   { src: testIcon },
+  //   { src: testIcon },
+  //   { src: testIcon },
+  //   { src: testIcon },
+  // ];
 
   return (
     <div className="relative">
@@ -63,7 +63,7 @@ export const UserDailyRewards = () => {
         amount={amount > 0 ? amount.toLocaleString(undefined, USD_FORMAT) : "$0"}
         labels={netRewardsLabels}
       />
-      <TestIconsDisplay icons={testIcons} />
+      {/* <TestIconsDisplay icons={testIcons} /> */}
       <div className="absolute top-[58px] left-[220px]">
         <CustomTooltips
           text="test"
