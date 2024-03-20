@@ -11,6 +11,7 @@ import { getAverageSupplyRewardApy } from "../../../redux/selectors/getAverageSu
 import { getAverageBorrowedRewardApy } from "../../../redux/selectors/getAverageBorrowedRewardApy";
 import { getAverageNetRewardApy } from "../../../redux/selectors/getAverageNetRewardApy";
 import { useNonFarmedAssets } from "../../../hooks/hooks";
+import { DoubtIcon } from "../../Icons/Icons";
 
 export const APY = () => {
   const { netAPY, netLiquidityAPY, dailyReturns } = useUserHealth();
@@ -27,13 +28,25 @@ export const APY = () => {
   const apyLabels = [
     [
       {
-        value: `${averageSupplyApy.toFixed(2)}%`,
+        value: `${
+          averageSupplyApy === 0
+            ? "0.00%"
+            : averageSupplyApy === 0.01
+            ? "<0.01%"
+            : `${averageSupplyApy.toFixed(2)}%`
+        }`,
         text: "Avg. Supply APY",
       },
     ],
     [
       {
-        value: `${averageBorrowedApy.toFixed(2)}%`,
+        value: `${
+          averageBorrowedApy === 0
+            ? "0.00%"
+            : averageBorrowedApy === 0.01
+            ? "<0.01%"
+            : `${averageBorrowedApy.toFixed(2)}%`
+        }`,
         text: "Avg. Borrow APY",
       },
     ],
@@ -46,38 +59,50 @@ export const APY = () => {
   return (
     <div className="relative">
       <div className="flex items-end">
-        <Stat
-          title="Net APY"
-          titleTooltip="Net APY = Daily Total Profit / Your Net Liquidity * 365 days"
-          amount={amount}
-          tooltip={tooltip}
-          labels={apyLabels}
-        />
-        <div
-          className="relative w-6 h-6 rounded-3xl bg-dark-100 flex items-center justify-center -ml-8 cursor-pointer"
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
-        >
-          <GiftIcon />
-          {showTooltip && (
-            <div className="absolute top-0 left-8 bg-dark-100 px-2.5 py-2.5 rounded-md border border-dark-300 w-[252px] z-20">
-              <div className="flex items-center justify-between text-xs text-gray-300 mb-2.5">
-                <p>Avg. Supply Reward APY</p>
-                {/* <span className="text-white">{userSupplyReward.toFixed(2)}%</span> */}
-              </div>
-
-              <div className="flex items-center justify-between text-xs text-gray-300 mb-2.5">
-                <p>Avg. Borrow Reward APY</p>
-                {/* <span className="text-white">{userBorrowedReward.toFixed(2)}%</span> */}
-              </div>
-
-              <div className="flex items-center justify-between text-xs text-gray-300">
-                <p>Avg. Net Liquidity Reward APY</p>
-                <span className="text-white">3.12%</span>
-              </div>
-            </div>
-          )}
+        <Stat title="Net APY" amount={amount} tooltip={tooltip} labels={apyLabels} />
+        <div className="absolute top-0 left-[52px] cursor-pointer text-gray-300">
+          <CustomTooltips
+            text="Net APY = Daily Total Profit / Your Net Liquidity * 365 days"
+            style={{
+              bottom: -20,
+              left: 20,
+              color: "#C0C4E9",
+            }}
+          >
+            <DoubtIcon />
+          </CustomTooltips>
         </div>
+        {!(userSupplyReward === 0 && userBorrowedReward === 0 && userNetReward === 0) && (
+          <div
+            className="relative w-6 h-6 rounded-3xl bg-dark-100 flex items-center justify-center -ml-8 cursor-pointer"
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+          >
+            <GiftIcon />
+            {showTooltip && (
+              <div className="absolute top-0 left-8 bg-dark-100 px-2.5 pt-2.5 rounded-md border border-dark-300 w-[252px] z-20">
+                {userSupplyReward !== 0 && (
+                  <div className="flex items-center justify-between text-xs text-gray-300 mb-2.5">
+                    <p>Avg. Supply Reward APY</p>
+                    <span className="text-white">{userSupplyReward}%</span>
+                  </div>
+                )}
+                {userBorrowedReward !== 0 && (
+                  <div className="flex items-center justify-between text-xs text-gray-300 mb-2.5">
+                    <p>Avg. Borrow Reward APY</p>
+                    <span className="text-white">{userBorrowedReward}%</span>
+                  </div>
+                )}
+                {userNetReward !== 0 && (
+                  <div className="flex items-center justify-between text-xs text-gray-300 mb-2.5">
+                    <p>Avg. Net Liquidity Reward APY</p>
+                    <span className="text-white">{userNetReward}%</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

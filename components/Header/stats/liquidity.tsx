@@ -8,6 +8,8 @@ import { trackFullDigits } from "../../../utils/telemetry";
 import { Stat } from "./components";
 import { getWeightedNetLiquidity } from "../../../redux/selectors/getAccountRewards";
 import { useProtocolNetLiquidity } from "../../../hooks/useNetLiquidity";
+import { DoubtIcon } from "../../Icons/Icons";
+import CustomTooltips from "../../CustomTooltips/CustomTooltips";
 
 export const ProtocolLiquidity = () => {
   const { fullDigits, setDigits } = useFullDigits();
@@ -91,12 +93,25 @@ export const UserLiquidity = () => {
   };
 
   return (
-    <Stat
-      title="Net Liquidity"
-      titleTooltip="Net Liquidity = Your total Supplied - Your total Borrowed"
-      amount={userNetLiquidityValue}
-      labels={showLabels ? netLiquidityLabels : []}
-      onClick={toggleValues}
-    />
+    <div className="relative">
+      <Stat
+        title="Net Liquidity"
+        amount={userNetLiquidityValue}
+        labels={showLabels ? netLiquidityLabels : []}
+        onClick={toggleValues}
+      />
+      <div className="absolute top-0 left-[80px] cursor-pointer text-gray-300">
+        <CustomTooltips
+          text="Net Liquidity = Your total Supplied - Your total Borrowed"
+          style={{
+            bottom: -20,
+            left: 20,
+            color: "#C0C4E9",
+          }}
+        >
+          <DoubtIcon />
+        </CustomTooltips>
+      </div>
+    </div>
   );
 };

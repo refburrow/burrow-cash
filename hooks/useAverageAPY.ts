@@ -20,7 +20,7 @@ export const useAverageAPY = () => {
         const apyWeightedValue = assetValue * (asset.apy / 100);
         totalApyWeightedValue += apyWeightedValue;
       });
-      const totalApyWeightedValueRounded = totalApyWeightedValue;
+      const totalApyWeightedValueRounded = parseFloat(totalApyWeightedValue.toFixed(2));
       setTotalApysuppliedValue(totalApyWeightedValueRounded);
     } else {
       console.error("suppliedRows is not an array:", suppliedRows);
@@ -31,7 +31,13 @@ export const useAverageAPY = () => {
     if (userDeposited > 0) {
       const dailyApy = totalApysuppliedValue / userDeposited;
       const annualApy = dailyApy * 365;
-      setAverageSupplyApy(parseFloat(annualApy.toFixed(2)));
+      if (annualApy === 0) {
+        setAverageSupplyApy(0);
+      } else if (annualApy < 0.01) {
+        setAverageSupplyApy(0.01);
+      } else {
+        setAverageSupplyApy(annualApy);
+      }
     } else {
       console.error("userDeposited cannot be 0.");
     }
@@ -45,7 +51,9 @@ export const useAverageAPY = () => {
         const apyWeightedValue = assetValue * (asset.borrowApy / 100);
         totalApyBorrowedWeightedValue += apyWeightedValue;
       });
-      const totalApyBorrowedWeightedValueRounded = totalApyBorrowedWeightedValue;
+      const totalApyBorrowedWeightedValueRounded = parseFloat(
+        totalApyBorrowedWeightedValue.toFixed(2),
+      );
       setTotalApyBorrowedValue(totalApyBorrowedWeightedValueRounded);
     } else {
       console.error("borrowedRows is not an array:", borrowedRows);
@@ -56,7 +64,13 @@ export const useAverageAPY = () => {
     if (userBorrowed > 0) {
       const dailyApy = totalApyBorrowedValue / userBorrowed;
       const annualApy = dailyApy * 365;
-      setAverageBorrowedApy(parseFloat(annualApy.toFixed(2)));
+      if (annualApy === 0) {
+        setAverageBorrowedApy(0);
+      } else if (annualApy < 0.01) {
+        setAverageBorrowedApy(0.01);
+      } else {
+        setAverageBorrowedApy(annualApy);
+      }
     } else {
       console.error("userBorrowed cannot be 0.");
     }
