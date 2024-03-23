@@ -11,8 +11,8 @@ export const getAverageAPY = createSelector(
     const [gainBorrowed, totalBorrowed] = getGains(account.portfolio, assets, "borrowed");
     const suplyGains = gainCollateral + gainSupplied;
     const supplyTotals = totalCollateral + totalSupplied;
-    const averageSupplyApy = (suplyGains / supplyTotals) * 100;
-    const averageBorrowedApy = (gainBorrowed / totalBorrowed) * 100;
+    const averageSupplyApy = supplyTotals > 0 ? (suplyGains / supplyTotals) * 100 : 0;
+    const averageBorrowedApy = totalBorrowed > 0 ? (gainBorrowed / totalBorrowed) * 100 : 0;
     return { averageSupplyApy, averageBorrowedApy };
   },
 );

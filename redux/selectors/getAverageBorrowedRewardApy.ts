@@ -88,6 +88,6 @@ export const getAverageBorrowedRewardApy = () =>
           },
           [0, 0],
         );
-      return dailyTotalBorrowProfit > 0 ? (dailyTotalBorrowProfit / totalBorrow) * 365 * 100 : 0;
+      return totalBorrow > 0 ? (dailyTotalBorrowProfit / totalBorrow) * 365 * 100 : 0;
     },
   );

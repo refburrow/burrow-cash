@@ -20,7 +20,6 @@ export const APY = () => {
   const { weightedNetLiquidity, hasNegativeNetLiquidity, assets } = useNonFarmedAssets();
   const totalApy = netAPY + netLiquidityAPY;
   const amount = `${totalApy.toLocaleString(undefined, APY_FORMAT)}%`;
-  const [showTooltip, setShowTooltip] = useState(false);
   const showLabels = netAPY > 0 || netLiquidityAPY > 0;
   const { averageSupplyApy, averageBorrowedApy } = useAverageAPY();
   const apyLabels = [
@@ -56,7 +55,7 @@ export const APY = () => {
           titleTooltip="Net APY = Daily Total Profit / Your Net Liquidity * 365 days"
           amount={amount}
           tooltip={tooltip}
-          labels={apyLabels}
+          labels={showLabels ? apyLabels : []}
         />
       </div>
     </div>

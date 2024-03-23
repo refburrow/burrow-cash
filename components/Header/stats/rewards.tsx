@@ -58,7 +58,11 @@ export const UserDailyRewards = () => {
     ],
     [
       {
-        value: `-${toInternationalCurrencySystem_usd(baseBorrowedUsdDaily)}`,
+        value: `${
+          baseBorrowedUsdDaily > 0
+            ? `-${toInternationalCurrencySystem_usd(baseBorrowedUsdDaily)}`
+            : "$0"
+        }`,
         text: "Borrow Interest",
       },
     ],
@@ -74,7 +78,7 @@ export const UserDailyRewards = () => {
             <IconMore allRewards={allRewards} />
           </div>
         }
-        labels={rewardsLabels}
+        labels={totalUsdDaily !== 0 ? rewardsLabels : []}
       />
     </div>
   );
@@ -139,7 +143,7 @@ const IncentiveMore = ({ farmSuppliedUsdDaily, farmBorrowedUsdDaily, farmNetTvlU
           setShowTooltip(!showTooltip);
         }}
       >
-        <div className="w-[22px] h-[22px] rounded-3xl bg-dark-100 flex items-center justify-center z-50 cursor-pointer">
+        <div className="w-[22px] h-[22px] rounded-3xl bg-dark-100 flex items-center justify-center z-50 cursor-pointer mr-8">
           <svg
             width="12"
             height="4"

@@ -121,9 +121,7 @@ export const getDailyAmount = (
     const asset = assets.data[tokenId];
     const assetDecimals = asset.metadata.decimals + asset.config.extra_decimals;
     const balance = Number(shrinkToken(assetData.balance, assetDecimals));
-    const dailyAmount = asset.price?.usd
-      ? new Decimal(balance).mul(assetData.apr).div(asset.price?.usd).div(365).toNumber()
-      : 0;
+    const dailyAmount = new Decimal(balance).mul(assetData.apr).div(365).toNumber();
     return { [tokenId]: dailyAmount };
   });
 };
@@ -165,7 +163,7 @@ export const getIncentiveDailyAmount = (
         );
         const dailyAmount =
           totalBoostedShares > 0 ? (boostedShares / totalBoostedShares) * totalRewardsPerDay : 0;
-        result[rewardTokenId] = new Decimal(result[rewardTokenId] || 0) // TODO
+        result[rewardTokenId] = new Decimal(result[rewardTokenId] || 0)
           .plus(dailyAmount)
           .toNumber();
       });

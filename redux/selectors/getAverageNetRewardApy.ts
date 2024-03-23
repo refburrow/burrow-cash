@@ -91,4 +91,7 @@ export const getNetGains = (
 
       return [balanceUSD * (netTvlMultiplier ? 1 : 0), apr];
     })
-    .reduce(([gain, sum], [balance, apr]) => [gain + balance * apr, sum + balance], [0, 0]);
+    .reduce(
+      ([gain, sum], [balanceUSD, apr]) => [gain + balanceUSD * apr, sum + balanceUSD],
+      [0, 0],
+    );
