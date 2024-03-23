@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useAppSelector } from "../redux/hooks";
 import { getTotalAccountBalance } from "../redux/selectors/getTotalAccountBalance";
 import { usePortfolioAssets } from "./hooks";
+import { getAverageAPY } from "../redux/selectors/getAverageAPY";
 
-export const useAverageAPY = () => {
+export const useAverageAPY2 = () => {
   const userDeposited = useAppSelector(getTotalAccountBalance("supplied"));
   const userBorrowed = useAppSelector(getTotalAccountBalance("borrowed"));
   const [suppliedRows, borrowedRows] = usePortfolioAssets();
@@ -76,5 +77,9 @@ export const useAverageAPY = () => {
     }
   }, [totalApyBorrowedValue, userBorrowed, setAverageBorrowedApy]);
 
+  return { averageSupplyApy, averageBorrowedApy };
+};
+export const useAverageAPY = () => {
+  const { averageSupplyApy, averageBorrowedApy } = useAppSelector(getAverageAPY);
   return { averageSupplyApy, averageBorrowedApy };
 };

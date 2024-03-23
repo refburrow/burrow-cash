@@ -1,8 +1,14 @@
-import { useRewards } from "../../../hooks/useRewards";
+import { useState } from "react";
+import { useRewards, useDailyRewards } from "../../../hooks/useRewards";
 import { TOKEN_FORMAT, USD_FORMAT, NUMBER_FORMAT } from "../../../store";
 import CustomTooltips from "../../CustomTooltips/CustomTooltips";
 import TokenIcon from "../../TokenIcon";
 import { Stat } from "./components";
+import HtmlTooltip from "../../common/html-tooltip";
+import {
+  toInternationalCurrencySystem_usd,
+  toInternationalCurrencySystem_number,
+} from "../../../utils/uiNumber";
 
 const transformAssetReward = (r, text) => ({
   value: r.dailyAmount.toLocaleString(undefined, TOKEN_FORMAT),
@@ -14,81 +20,62 @@ const transformAssetReward = (r, text) => ({
 const sumRewards = (acc, r) => acc + r.dailyAmount * r.price;
 
 export const UserDailyRewards = () => {
-  const { brrr, extra, net } = useRewards();
-
-  const assetRewards = [
-    ...(Object.entries(brrr).length > 0 ? [brrr] : []),
-    ...extra.flatMap((f) => f[1]),
-  ];
-
-  const netRewards = net.flatMap((f) => f[1]);
-  // const assetLabels = assetRewards.map((r) => transformAssetReward(r, "Pools"));
-  // const netLabels = netRewards.map((r) => transformAssetReward(r, "Net Liquidity"));
-  // const labels = [[...assetLabels], netLabels.length ? [...netLabels] : []];
-  const amount = assetRewards.reduce(sumRewards, 0) + netRewards.reduce(sumRewards, 0);
-  const netRewardsLabels = [
+  const {
+    baseDepositUsdDaily,
+    baseBorrowedUsdDaily,
+    farmSuppliedUsdDaily,
+    farmBorrowedUsdDaily,
+    farmNetTvlUsdDaily,
+    farmTotalUsdDaily,
+    totalUsdDaily,
+    allRewards,
+  } = useDailyRewards();
+  useDailyRewards();
+  const rewardsLabels = [
     [
       {
-        value: "$1.25",
+        value: toInternationalCurrencySystem_usd(baseDepositUsdDaily),
         text: "Supply",
       },
     ],
     [
       {
-        value: "$5.26",
+        value: toInternationalCurrencySystem_usd(farmTotalUsdDaily),
         text: "Incentive",
       },
     ],
     [
       {
-        value: "-$2.26",
+        type: "component",
+        content: (
+          <IncentiveMore
+            farmSuppliedUsdDaily={farmSuppliedUsdDaily}
+            farmBorrowedUsdDaily={farmBorrowedUsdDaily}
+            farmNetTvlUsdDaily={farmNetTvlUsdDaily}
+          />
+        ),
+      },
+    ],
+    [
+      {
+        value: `-${toInternationalCurrencySystem_usd(baseBorrowedUsdDaily)}`,
         text: "Borrow Interest",
       },
     ],
   ];
-  // const testIcon = netRewards[0].icon;
-  // const testIcons = [
-  //   { src: testIcon },
-  //   { src: testIcon },
-  //   { src: testIcon },
-  //   { src: testIcon },
-  //   { src: testIcon },
-  // ];
-
   return (
     <div className="relative">
       <Stat
         title="Daily Rewards"
         titleTooltip="Estimated daily reward from incentives"
-        amount={amount > 0 ? amount.toLocaleString(undefined, USD_FORMAT) : "$0"}
-        labels={netRewardsLabels}
-      />
-      {/* <TestIconsDisplay icons={testIcons} /> */}
-      <div className="absolute top-[58px] left-[220px]">
-        <CustomTooltips
-          text="test"
-          style={{
-            width: 170,
-          }}
-        >
-          <div className="w-6 h-6 rounded-3xl bg-dark-100 flex items-center justify-center -ml-2.5 z-50">
-            <svg
-              width="12"
-              height="4"
-              viewBox="0 0 12 4"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M3.20005 1.9998C3.20005 2.66255 2.66279 3.1998 2.00005 3.1998C1.33731 3.1998 0.800049 2.66255 0.800049 1.9998C0.800049 1.33706 1.33731 0.799805 2.00005 0.799805C2.66279 0.799805 3.20005 1.33706 3.20005 1.9998ZM7.20005 1.9998C7.20005 2.66255 6.66279 3.1998 6.00005 3.1998C5.33731 3.1998 4.80005 2.66255 4.80005 1.9998C4.80005 1.33706 5.33731 0.799805 6.00005 0.799805C6.66279 0.799805 7.20005 1.33706 7.20005 1.9998ZM10 3.1998C10.6628 3.1998 11.2 2.66255 11.2 1.9998C11.2 1.33706 10.6628 0.799805 10 0.799805C9.33731 0.799805 8.80005 1.33706 8.80005 1.9998C8.80005 2.66255 9.33731 3.1998 10 3.1998Z"
-                fill="#C0C4E9"
-              />
-            </svg>
+        amount={
+          <div className="flex items-center gap-2">
+            {totalUsdDaily > 0 ? totalUsdDaily.toLocaleString(undefined, USD_FORMAT) : "$0"}
+            <IconMore allRewards={allRewards} />
           </div>
-        </CustomTooltips>
-      </div>
+        }
+        labels={rewardsLabels}
+      />
     </div>
   );
 };
@@ -116,21 +103,115 @@ export const ProtocolDailyRewards = () => {
   );
 };
 
-const TestIconsDisplay = ({ icons }) => (
-  <div className="absolute top-[29px] left-[110px] flex">
-    {icons.map((item, index) => (
+const IncentiveMore = ({ farmSuppliedUsdDaily, farmBorrowedUsdDaily, farmNetTvlUsdDaily }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  return (
+    <HtmlTooltip
+      open={showTooltip}
+      onOpen={() => setShowTooltip(true)}
+      onClose={() => setShowTooltip(false)}
+      title={
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between text-xs gap-6">
+            <span className="text-gray-300 font-normal">Supply Incentive</span>
+            <span className="text-white font-normal">
+              {toInternationalCurrencySystem_usd(farmSuppliedUsdDaily)}
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-xs gap-6">
+            <span className="text-gray-300 font-normal">Borrow Incentive</span>
+            <span className="text-white font-normal">
+              {toInternationalCurrencySystem_usd(farmBorrowedUsdDaily)}
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-xs gap-6">
+            <span className="text-gray-300 font-normal">Net Liquidity</span>
+            <span className="text-white font-normal">
+              {toInternationalCurrencySystem_usd(farmNetTvlUsdDaily)}
+            </span>
+          </div>
+        </div>
+      }
+    >
+      <span
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowTooltip(!showTooltip);
+        }}
+      >
+        <div className="w-[22px] h-[22px] rounded-3xl bg-dark-100 flex items-center justify-center z-50 cursor-pointer">
+          <svg
+            width="12"
+            height="4"
+            viewBox="0 0 12 4"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M3.20005 1.9998C3.20005 2.66255 2.66279 3.1998 2.00005 3.1998C1.33731 3.1998 0.800049 2.66255 0.800049 1.9998C0.800049 1.33706 1.33731 0.799805 2.00005 0.799805C2.66279 0.799805 3.20005 1.33706 3.20005 1.9998ZM7.20005 1.9998C7.20005 2.66255 6.66279 3.1998 6.00005 3.1998C5.33731 3.1998 4.80005 2.66255 4.80005 1.9998C4.80005 1.33706 5.33731 0.799805 6.00005 0.799805C6.66279 0.799805 7.20005 1.33706 7.20005 1.9998ZM10 3.1998C10.6628 3.1998 11.2 2.66255 11.2 1.9998C11.2 1.33706 10.6628 0.799805 10 0.799805C9.33731 0.799805 8.80005 1.33706 8.80005 1.9998C8.80005 2.66255 9.33731 3.1998 10 3.1998Z"
+              fill="#C0C4E9"
+            />
+          </svg>
+        </div>
+      </span>
+    </HtmlTooltip>
+  );
+};
+
+const IconMore = ({ allRewards }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const list = Object.values(allRewards);
+  return (
+    <HtmlTooltip
+      open={showTooltip}
+      onOpen={() => setShowTooltip(true)}
+      onClose={() => setShowTooltip(false)}
+      title={
+        <div className="flex flex-col gap-3">
+          {list.map(({ amount, asset }: any) => {
+            return (
+              <div key={asset.token_id} className="flex items-center justify-between text-xs gap-6">
+                <div className="flex items-center gap-1">
+                  <img className="w-5 h-5 rounded-full" src={asset?.metadata?.icon} alt="" />
+                  <span className="text-gray-300 font-normal">{asset?.metadata?.symbol}</span>
+                </div>
+                <span className="text-white font-normal">
+                  {toInternationalCurrencySystem_number(amount)}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      }
+    >
+      <span
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowTooltip(!showTooltip);
+        }}
+      >
+        <IconsDisplay icons={list} />
+      </span>
+    </HtmlTooltip>
+  );
+};
+const IconsDisplay = ({ icons }) => (
+  <div className="flex">
+    {icons.slice(0, 5).map((item, index) => (
       <img
-        key={index}
-        src={item.src}
+        key={item?.asset?.token_id}
+        src={item?.asset?.metadata?.icon}
         alt=""
         className="w-5 h-5 rounded-3xl border-2 border-gray-800"
         style={{
-          marginLeft: icons.length > 1 && index > 0 ? `-10px` : undefined,
+          marginLeft: icons.length > 1 && index > 0 ? `-8px` : undefined,
           zIndex: index + 1,
         }}
       />
     ))}
-    {icons.length === 5 && (
+    {icons.length > 5 && (
       <div className="w-5 h-5 rounded-3xl border-2 border-gray-800 bg-dark-100 flex items-center justify-center -ml-2.5 z-50">
         <svg
           width="12"

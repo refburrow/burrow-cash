@@ -54,10 +54,10 @@ export const UserLiquidity = () => {
   const userNetLiquidity = userDeposited - userBorrowed;
   const weightedNetLiquidity = useAppSelector(getWeightedNetLiquidity);
 
-  const userNetLiquidityValue = fullDigits?.user
-    ? userNetLiquidity.toLocaleString(undefined, COMPACT_USD_FORMAT)
-    : `$${m(userNetLiquidity)}`;
-
+  // const userNetLiquidityValue = fullDigits?.user
+  //   ? userNetLiquidity.toLocaleString(undefined, COMPACT_USD_FORMAT)
+  //   : `$${m(userNetLiquidity)}`;
+  const userNetLiquidityValue = userNetLiquidity > 0 ? `$${m(userNetLiquidity)}` : `$0`;
   const userWeightedNetLiquidityValue =
     weightedNetLiquidity > 0 ? `$${m(weightedNetLiquidity)}` : "$0";
 
@@ -96,22 +96,11 @@ export const UserLiquidity = () => {
     <div className="relative">
       <Stat
         title="Net Liquidity"
+        titleTooltip="Net Liquidity = Your total Supplied - Your total Borrowed"
         amount={userNetLiquidityValue}
         labels={showLabels ? netLiquidityLabels : []}
         onClick={toggleValues}
       />
-      <div className="absolute top-0 left-[80px] cursor-pointer text-gray-300">
-        <CustomTooltips
-          text="Net Liquidity = Your total Supplied - Your total Borrowed"
-          style={{
-            bottom: -20,
-            left: 20,
-            color: "#C0C4E9",
-          }}
-        >
-          <DoubtIcon />
-        </CustomTooltips>
-      </div>
     </div>
   );
 };

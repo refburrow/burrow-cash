@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import { twMerge } from "tailwind-merge";
+import { Modal, Box, useTheme } from "@mui/material";
 import SemiCircleProgressBar from "../../components/SemiCircleProgressBar/SemiCircleProgressBar";
 import { useUserHealth } from "../../hooks/useUserHealth";
 import { formatTokenValue, formatUSDValue, isMobileDevice } from "../../helpers/helpers";
@@ -9,20 +10,16 @@ import { useRewards } from "../../hooks/useRewards";
 import ClaimAllRewards from "../../components/ClaimAllRewards";
 import ModalHistoryInfo from "./modalHistoryInfo";
 import { modalProps } from "../../interfaces/common";
-import {
-  CloseIcon,
-  DangerIcon,
-  DoubtIcon,
-  QuestionIcon,
-  RecordsIcon,
-} from "../../components/Icons/Icons";
+import { DangerIcon, QuestionIcon, RecordsIcon } from "../../components/Icons/Icons";
 import CustomTooltips from "../../components/CustomTooltips/CustomTooltips";
-import { useAccountId, useNonFarmedAssets, useUnreadLiquidation } from "../../hooks/hooks";
-import { ProtocolDailyRewards, UserDailyRewards } from "../../components/Header/stats/rewards";
+import { useUnreadLiquidation } from "../../hooks/hooks";
+import { UserDailyRewards } from "../../components/Header/stats/rewards";
 import { UserLiquidity } from "../../components/Header/stats/liquidity";
 import { APY } from "../../components/Header/stats/apy";
 import { ContentBox } from "../../components/ContentBox/ContentBox";
-import CustomModal from "../../components/CustomModal/CustomModal";
+import { TagToolTip } from "../../components/ToolTip";
+import { Wrapper } from "../../components/Modal/style";
+import { CloseIcon } from "../../components/Modal/svg";
 
 const DashboardOverview = ({ suppliedRows, borrowedRows }) => {
   const [modal, setModal] = useState<modalProps>({
@@ -34,6 +31,7 @@ const DashboardOverview = ({ suppliedRows, borrowedRows }) => {
   const { unreadLiquidation, fetchUnreadLiquidation } = useUnreadLiquidation();
   const isMobile = isMobileDevice();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const theme = useTheme();
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -118,7 +116,7 @@ const DashboardOverview = ({ suppliedRows, borrowedRows }) => {
       <ContentBox className="mb-8">
         <div className="lg3:flex lg3:justify-between">
           <div className="mb-4 lg3:max-w-[640px] lg3:mb-0">
-            <div className="flex gap-2 justify-between lg3:gap-6 lg3:gap-8">
+            <div className="flex gap-2 justify-between lg3:gap-6">
               <div className="gap-6 flex flex-col flex-2">
                 <UserLiquidity />
                 <UserDailyRewards />
@@ -127,55 +125,27 @@ const DashboardOverview = ({ suppliedRows, borrowedRows }) => {
               <div className="gap-6 flex flex-col flex-1">
                 <APY />
                 <div className="flex flex-col">
-                  {/* <OverviewItem */}
-                  {/*  title="Unclaimed Rewards" */}
-                  {/*  value={rewardsObj?.data?.totalUnClaimUSDDisplay || "$0"} */}
-                  {/* /> */}
-                  <div className="h6 text-gray-300 flex ">
+                  <div className="h6 text-gray-300 flex items-center gap-1">
                     Unclaimed Rewards
-                    <div className="cursor-pointer ml-1">
-                      <CustomTooltips
-                        text="Base APY earnings added to your supply balance."
-                        style={{
-                          bottom: -12,
-                          left: 20,
-                        }}
-                      >
-                        <DoubtIcon />
-                      </CustomTooltips>
-                    </div>
+                    <TagToolTip title="Base APY earnings added to your supply balance." />
                   </div>
                   <div className="items-start lg3:flex-row lg3:items-center lg3:gap-4">
                     <div className="flex items-center gap-4 my-1">
                       <div className="h2">{rewardsObj?.data?.totalUnClaimUSDDisplay || "$0"}</div>
                       <div className="flex" style={{ marginRight: 5 }}>
-                        {rewardsObj?.brrr?.icon ? (
-                          <img
-                            src={rewardsObj?.brrr?.icon}
-                            width={26}
-                            height={26}
-                            alt="token"
-                            className="rounded-full"
-                            style={{ margin: -3 }}
-                          />
-                        ) : null}
-
-                        {rewardsObj?.extra?.length
-                          ? rewardsObj.extra.map((d, i) => {
-                              const extraData = d?.[1];
-                              return (
-                                <img
-                                  src={extraData?.icon}
-                                  width={26}
-                                  key={(extraData?.tokenId || "0") + i}
-                                  height={26}
-                                  alt="token"
-                                  className="rounded-full"
-                                  style={{ margin: -3 }}
-                                />
-                              );
-                            })
-                          : null}
+                        {rewardsObj?.data?.array.map(({ data, tokenId }) => {
+                          return (
+                            <img
+                              src={data?.icon}
+                              width={20}
+                              key={tokenId}
+                              height={20}
+                              alt="token"
+                              className="rounded-full"
+                              style={{ margin: -3 }}
+                            />
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -187,23 +157,28 @@ const DashboardOverview = ({ suppliedRows, borrowedRows }) => {
                         >
                           Claim
                         </div>
-                        <CustomModal
-                          title="Claim Rewards"
-                          isOpen={isModalOpen}
-                          onClose={closeModal}
-                          onOutsideClick={closeModal}
-                          className="modal-mobile-bottom modal-history"
-                          width={400}
-                        >
-                          <>
-                            {unclaimNodes}
-                            <ClaimAllRewards
-                              Button={ClaimButton}
-                              onDone={closeModal}
-                              location="dashboard"
-                            />
-                          </>
-                        </CustomModal>
+                        <Modal open={isModalOpen} onClose={closeModal}>
+                          <Wrapper
+                            sx={{
+                              "& *::-webkit-scrollbar": {
+                                backgroundColor: theme.custom.scrollbarBg,
+                              },
+                            }}
+                          >
+                            <Box sx={{ p: ["20px", "20px"] }}>
+                              <div className="flex items-center justify-between text-lg text-white mb-7">
+                                <span className="text-lg font-bold">Claim Rewards</span>
+                                <CloseIcon onClick={closeModal} className="cursor-pointer" />
+                              </div>
+                              {unclaimNodes}
+                              <ClaimAllRewards
+                                Button={ClaimButton}
+                                onDone={closeModal}
+                                location="dashboard"
+                              />
+                            </Box>
+                          </Wrapper>
+                        </Modal>
                       </div>
                     )}
                   </div>

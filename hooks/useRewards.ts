@@ -1,11 +1,10 @@
 import { useAppSelector } from "../redux/hooks";
-import { getAccountRewards } from "../redux/selectors/getAccountRewards";
+import { getAccountRewards, getAccountDailyRewards } from "../redux/selectors/getAccountRewards";
 import { getNetLiquidityRewards, getProtocolRewards } from "../redux/selectors/getProtocolRewards";
 import { getTokenLiquidity } from "../redux/selectors/getTokenLiquidity";
 import { useProtocolNetLiquidity } from "./useNetLiquidity";
 import { APY_FORMAT, USD_FORMAT } from "../store";
 import { useAvailableAssets } from "./hooks";
-import { UIAsset } from "../interfaces";
 import { getAssets } from "../redux/assetsSelectors";
 
 export function useRewards() {
@@ -48,6 +47,10 @@ export function useRewards() {
       totalUnClaimUSDDisplay,
     },
   };
+}
+export function useDailyRewards() {
+  const assetRewards = useAppSelector(getAccountDailyRewards);
+  return assetRewards;
 }
 
 export function useNetLiquidityRewards() {

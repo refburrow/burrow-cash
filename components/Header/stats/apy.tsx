@@ -12,42 +12,34 @@ import { getAverageBorrowedRewardApy } from "../../../redux/selectors/getAverage
 import { getAverageNetRewardApy } from "../../../redux/selectors/getAverageNetRewardApy";
 import { useNonFarmedAssets } from "../../../hooks/hooks";
 import { DoubtIcon } from "../../Icons/Icons";
+import HtmlTooltip from "../../common/html-tooltip";
+import { format_apy } from "../../../utils/uiNumber";
 
 export const APY = () => {
   const { netAPY, netLiquidityAPY, dailyReturns } = useUserHealth();
   const { weightedNetLiquidity, hasNegativeNetLiquidity, assets } = useNonFarmedAssets();
   const totalApy = netAPY + netLiquidityAPY;
   const amount = `${totalApy.toLocaleString(undefined, APY_FORMAT)}%`;
+  const [showTooltip, setShowTooltip] = useState(false);
   const showLabels = netAPY > 0 || netLiquidityAPY > 0;
   const { averageSupplyApy, averageBorrowedApy } = useAverageAPY();
-  const [showTooltip, setShowTooltip] = useState(false);
-  const userSupplyReward = useAppSelector(getAverageSupplyRewardApy());
-  const userBorrowedReward = useAppSelector(getAverageBorrowedRewardApy());
-  const userNetReward = useAppSelector(getAverageNetRewardApy());
-
   const apyLabels = [
     [
       {
-        value: `${
-          averageSupplyApy === 0
-            ? "0.00%"
-            : averageSupplyApy === 0.01
-            ? "<0.01%"
-            : `${averageSupplyApy.toFixed(2)}%`
-        }`,
+        value: format_apy(averageSupplyApy),
         text: "Avg. Supply APY",
       },
     ],
     [
       {
-        value: `${
-          averageBorrowedApy === 0
-            ? "0.00%"
-            : averageBorrowedApy === 0.01
-            ? "<0.01%"
-            : `${averageBorrowedApy.toFixed(2)}%`
-        }`,
+        value: format_apy(averageBorrowedApy),
         text: "Avg. Borrow APY",
+      },
+    ],
+    [
+      {
+        type: "component",
+        content: <IncentiveAPY />,
       },
     ],
   ];
@@ -59,50 +51,13 @@ export const APY = () => {
   return (
     <div className="relative">
       <div className="flex items-end">
-        <Stat title="Net APY" amount={amount} tooltip={tooltip} labels={apyLabels} />
-        <div className="absolute top-0 left-[52px] cursor-pointer text-gray-300">
-          <CustomTooltips
-            text="Net APY = Daily Total Profit / Your Net Liquidity * 365 days"
-            style={{
-              bottom: -20,
-              left: 20,
-              color: "#C0C4E9",
-            }}
-          >
-            <DoubtIcon />
-          </CustomTooltips>
-        </div>
-        {!(userSupplyReward === 0 && userBorrowedReward === 0 && userNetReward === 0) && (
-          <div
-            className="relative w-6 h-6 rounded-3xl bg-dark-100 flex items-center justify-center -ml-8 cursor-pointer"
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
-          >
-            <GiftIcon />
-            {showTooltip && (
-              <div className="absolute top-0 left-8 bg-dark-100 px-2.5 pt-2.5 rounded-md border border-dark-300 w-[252px] z-20">
-                {userSupplyReward !== 0 && (
-                  <div className="flex items-center justify-between text-xs text-gray-300 mb-2.5">
-                    <p>Avg. Supply Reward APY</p>
-                    <span className="text-white">{userSupplyReward}%</span>
-                  </div>
-                )}
-                {userBorrowedReward !== 0 && (
-                  <div className="flex items-center justify-between text-xs text-gray-300 mb-2.5">
-                    <p>Avg. Borrow Reward APY</p>
-                    <span className="text-white">{userBorrowedReward}%</span>
-                  </div>
-                )}
-                {userNetReward !== 0 && (
-                  <div className="flex items-center justify-between text-xs text-gray-300 mb-2.5">
-                    <p>Avg. Net Liquidity Reward APY</p>
-                    <span className="text-white">{userNetReward}%</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+        <Stat
+          title="Net APY"
+          titleTooltip="Net APY = Daily Total Profit / Your Net Liquidity * 365 days"
+          amount={amount}
+          tooltip={tooltip}
+          labels={apyLabels}
+        />
       </div>
     </div>
   );
@@ -140,7 +95,46 @@ const NotFarmingNetLiquidity = ({ assets, liquidity }) => (
     </Typography>
   </Stack>
 );
-
+const IncentiveAPY = () => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const userSupplyApy = useAppSelector(getAverageSupplyRewardApy());
+  const userBorrowedApy = useAppSelector(getAverageBorrowedRewardApy());
+  const userNetApy = useAppSelector(getAverageNetRewardApy());
+  return (
+    <HtmlTooltip
+      open={showTooltip}
+      onOpen={() => setShowTooltip(true)}
+      onClose={() => setShowTooltip(false)}
+      title={
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between text-xs gap-6">
+            <span className="text-gray-300 font-normal">Avg. Supply Reward APY</span>
+            <span className="text-white font-normal">{format_apy(userSupplyApy)}</span>
+          </div>
+          <div className="flex items-center justify-between text-xs gap-6">
+            <span className="text-gray-300 font-normal">Avg. Borrow Reward APY</span>
+            <span className="text-white font-normal">{format_apy(userBorrowedApy)}</span>
+          </div>
+          <div className="flex items-center justify-between text-xs gap-6">
+            <span className="text-gray-300 font-normal">Avg. Net Liquidity Reward APY</span>
+            <span className="text-white font-normal">{format_apy(userNetApy)}</span>
+          </div>
+        </div>
+      }
+    >
+      <span
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowTooltip(!showTooltip);
+        }}
+      >
+        <div className="w-[22px] h-[22px] rounded-3xl bg-dark-100 flex items-center justify-center z-50 cursor-pointer">
+          <GiftIcon />
+        </div>
+      </span>
+    </HtmlTooltip>
+  );
+};
 const GiftIcon = () => {
   return (
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
