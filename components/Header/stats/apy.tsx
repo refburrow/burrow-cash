@@ -99,6 +99,8 @@ const IncentiveAPY = () => {
   const userSupplyApy = useAppSelector(getAverageSupplyRewardApy());
   const userBorrowedApy = useAppSelector(getAverageBorrowedRewardApy());
   const userNetApy = useAppSelector(getAverageNetRewardApy());
+  const empty = !userSupplyApy && !userBorrowedApy && !userNetApy;
+  if (empty) return null;
   return (
     <HtmlTooltip
       open={showTooltip}
@@ -106,15 +108,27 @@ const IncentiveAPY = () => {
       onClose={() => setShowTooltip(false)}
       title={
         <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between text-xs gap-6">
+          <div
+            className={`flex items-center justify-between text-xs gap-6 ${
+              userSupplyApy ? "" : "hidden"
+            }`}
+          >
             <span className="text-gray-300 font-normal">Avg. Supply Reward APY</span>
             <span className="text-white font-normal">{format_apy(userSupplyApy)}</span>
           </div>
-          <div className="flex items-center justify-between text-xs gap-6">
+          <div
+            className={`flex items-center justify-between text-xs gap-6 ${
+              userBorrowedApy ? "" : "hidden"
+            }`}
+          >
             <span className="text-gray-300 font-normal">Avg. Borrow Reward APY</span>
             <span className="text-white font-normal">{format_apy(userBorrowedApy)}</span>
           </div>
-          <div className="flex items-center justify-between text-xs gap-6">
+          <div
+            className={`flex items-center justify-between text-xs gap-6 ${
+              userNetApy ? "" : "hidden"
+            }`}
+          >
             <span className="text-gray-300 font-normal">Avg. Net Liquidity Reward APY</span>
             <span className="text-white font-normal">{format_apy(userNetApy)}</span>
           </div>

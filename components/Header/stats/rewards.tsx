@@ -71,7 +71,7 @@ export const UserDailyRewards = () => {
     <div className="relative">
       <Stat
         title="Daily Rewards"
-        titleTooltip="Estimated daily reward from incentives"
+        titleTooltip="Estimated daily profit"
         amount={
           <div className="flex items-center gap-2">
             {totalUsdDaily > 0 ? totalUsdDaily.toLocaleString(undefined, USD_FORMAT) : "$0"}

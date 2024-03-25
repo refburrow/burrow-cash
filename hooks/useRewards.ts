@@ -6,6 +6,7 @@ import { useProtocolNetLiquidity } from "./useNetLiquidity";
 import { APY_FORMAT, USD_FORMAT } from "../store";
 import { useAvailableAssets } from "./hooks";
 import { getAssets } from "../redux/assetsSelectors";
+import { standardizeAsset } from "../utils";
 
 export function useRewards() {
   const assetRewards = useAppSelector(getAccountRewards);
@@ -32,7 +33,7 @@ export function useRewards() {
   allRewards.forEach(([key, value]) => {
     all.push({
       tokenId: key,
-      data: value,
+      data: standardizeAsset(value),
     });
   });
 
