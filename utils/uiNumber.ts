@@ -33,7 +33,7 @@ export const toInternationalCurrencySystem_number = (v) => {
   if (absDecimal.eq(0)) {
     return "0";
   } else if (absDecimal.lt(0.01)) {
-    return decimal.lt(0) ? "-<0.01" : "0.01";
+    return decimal.lt(0) ? "-<0.01" : "<0.01";
   } else {
     return decimal.lt(0)
       ? `-${toInternationalCurrencySystem(decimal.toFixed())}`
