@@ -109,6 +109,8 @@ export const ProtocolDailyRewards = () => {
 
 const IncentiveMore = ({ farmSuppliedUsdDaily, farmBorrowedUsdDaily, farmNetTvlUsdDaily }) => {
   const [showTooltip, setShowTooltip] = useState(false);
+  const empty = !farmSuppliedUsdDaily && !farmBorrowedUsdDaily && !farmNetTvlUsdDaily;
+  if (empty) return null;
   return (
     <HtmlTooltip
       open={showTooltip}
@@ -116,19 +118,31 @@ const IncentiveMore = ({ farmSuppliedUsdDaily, farmBorrowedUsdDaily, farmNetTvlU
       onClose={() => setShowTooltip(false)}
       title={
         <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between text-xs gap-6">
+          <div
+            className={`flex items-center justify-between text-xs gap-6 ${
+              farmSuppliedUsdDaily ? "" : "hidden"
+            }`}
+          >
             <span className="text-gray-300 font-normal">Supply Incentive</span>
             <span className="text-white font-normal">
               {toInternationalCurrencySystem_usd(farmSuppliedUsdDaily)}
             </span>
           </div>
-          <div className="flex items-center justify-between text-xs gap-6">
+          <div
+            className={`flex items-center justify-between text-xs gap-6 ${
+              farmBorrowedUsdDaily ? "" : "hidden"
+            }`}
+          >
             <span className="text-gray-300 font-normal">Borrow Incentive</span>
             <span className="text-white font-normal">
               {toInternationalCurrencySystem_usd(farmBorrowedUsdDaily)}
             </span>
           </div>
-          <div className="flex items-center justify-between text-xs gap-6">
+          <div
+            className={`flex items-center justify-between text-xs gap-6 ${
+              farmNetTvlUsdDaily ? "" : "hidden"
+            }`}
+          >
             <span className="text-gray-300 font-normal">Net Liquidity</span>
             <span className="text-white font-normal">
               {toInternationalCurrencySystem_usd(farmNetTvlUsdDaily)}

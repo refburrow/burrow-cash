@@ -6,10 +6,11 @@ import { omit } from "lodash";
 import { shrinkToken } from "../../store";
 import { RootState } from "../store";
 import { Asset, AssetsState } from "../assetState";
-import { Farm, FarmData, Portfolio } from "../accountState";
+import { Farm, FarmData, Portfolio, AccountState } from "../accountState";
+import { AppState } from "../appSlice";
 import { getStaking } from "./getStaking";
 import { INetTvlFarmRewards } from "../../interfaces";
-import { hasAssets, toUsd } from "../utils";
+import { hasAssets, toUsd, emptySuppliedAsset, emptyBorrowedAsset } from "../utils";
 import { cloneObj } from "../../helpers/helpers";
 import { standardizeAsset } from "../../utils";
 
@@ -415,18 +416,39 @@ export const getWeightedAssets = createSelector(
 export const getAccountDailyRewards = createSelector(
   (state: RootState) => state.assets,
   (state: RootState) => state.account,
-  (assets, account) => {
-    const baseCollateralUsdDaily = getGains(account.portfolio, assets, "collateral")[0] / 365;
-    const baseSuppliedUsdDaily = getGains(account.portfolio, assets, "supplied")[0] / 365;
-    const baseBorrowedUsdDaily = getGains(account.portfolio, assets, "borrowed")[0] / 365;
+  (state: RootState) => state.app,
+  (assets, account, app) => {
+    const accountDustProcess = dustProcess({
+      accountSource: account,
+      assets,
+      app,
+    });
+    const baseCollateralUsdDaily =
+      getGains(accountDustProcess.portfolio, assets, "collateral")[0] / 365;
+    const baseSuppliedUsdDaily =
+      getGains(accountDustProcess.portfolio, assets, "supplied")[0] / 365;
+    const baseBorrowedUsdDaily =
+      getGains(accountDustProcess.portfolio, assets, "borrowed")[0] / 365;
 
     const farmSuppliedUsdDaily = getGainsFromIncentive(account.portfolio, assets, "supplied");
     const farmBorrowedUsdDaily = getGainsFromIncentive(account.portfolio, assets, "borrowed");
     const farmNetTvlUsdDaily = getGainsFromIncentive(account.portfolio, assets, "netTvl");
 
-    const baseSuppliedAmountDaily = getDailyAmount(account.portfolio, assets, "supplied");
-    const baseCollateralAmountDaily = getDailyAmount(account.portfolio, assets, "collateral");
-    const baseBorrowedAmountDaily = getDailyAmount(account.portfolio, assets, "borrowed");
+    const baseSuppliedAmountDaily = getDailyAmount(
+      accountDustProcess.portfolio,
+      assets,
+      "supplied",
+    );
+    const baseCollateralAmountDaily = getDailyAmount(
+      accountDustProcess.portfolio,
+      assets,
+      "collateral",
+    );
+    const baseBorrowedAmountDaily = getDailyAmount(
+      accountDustProcess.portfolio,
+      assets,
+      "borrowed",
+    );
 
     const farmSuppliedAmountDaily = getIncentiveDailyAmount(account.portfolio, assets, "supplied");
     const farmBorrowedAmountDaily = getIncentiveDailyAmount(account.portfolio, assets, "borrowed");
@@ -479,6 +501,77 @@ export const getAccountDailyRewards = createSelector(
     };
   },
 );
+function dustProcess({
+  accountSource,
+  assets,
+  app,
+}: {
+  accountSource: AccountState;
+  assets: AssetsState;
+  app: AppState;
+}) {
+  const account = Copy(accountSource);
+  const portfolioAssets = {
+    ...account.portfolio.supplied,
+    ...account.portfolio.collateral,
+  };
+  const supplied = Object.keys(portfolioAssets)
+    .map((tokenId) => {
+      const asset = assets.data[tokenId];
+      const collateral = shrinkToken(
+        account.portfolio.collateral[tokenId]?.balance || 0,
+        asset.metadata.decimals + asset.config.extra_decimals,
+      );
+      const suppliedBalance = shrinkToken(
+        account.portfolio.supplied[tokenId]?.balance || 0,
+        asset.metadata.decimals + asset.config.extra_decimals,
+      );
+      const suppliedToken = Number(collateral) + Number(suppliedBalance);
+      return {
+        tokenId,
+        supplied: suppliedToken,
+      };
+    })
+    .filter(app.showDust ? Boolean : emptySuppliedAsset)
+    .reduce((acc, cur) => [...acc, cur.tokenId], [] as any);
+
+  const borrowed = Object.keys(account.portfolio.borrowed)
+    .map((tokenId) => {
+      const asset = assets.data[tokenId];
+      const borrowedBalance = account.portfolio.borrowed[tokenId].balance;
+      const borrowedToken = Number(
+        shrinkToken(borrowedBalance, asset.metadata.decimals + asset.config.extra_decimals),
+      );
+      return {
+        tokenId,
+        borrowed: borrowedToken,
+      };
+    })
+    .filter(app.showDust ? Boolean : emptyBorrowedAsset)
+    .reduce((acc, cur) => [...acc, cur.tokenId], [] as any);
+  const newSupplied = {};
+  const newCollateral = {};
+  const newBorrowed = {};
+  supplied.forEach((tokenId) => {
+    if (account.portfolio.supplied[tokenId]) {
+      newSupplied[tokenId] = account.portfolio.supplied[tokenId];
+    }
+    if (account.portfolio.collateral[tokenId]) {
+      newCollateral[tokenId] = account.portfolio.collateral[tokenId];
+    }
+  });
+  borrowed.forEach((tokenId) => {
+    newBorrowed[tokenId] = account.portfolio.borrowed[tokenId];
+  });
+  account.portfolio.supplied = newSupplied;
+  account.portfolio.collateral = newCollateral;
+  account.portfolio.borrowed = newBorrowed;
+  return account;
+}
 function sumMap(acc, rewardData) {
   return [...acc, { [rewardData[0]]: rewardData[1] }];
+}
+
+function Copy(obj) {
+  return JSON.parse(JSON.stringify(obj || {}));
 }
