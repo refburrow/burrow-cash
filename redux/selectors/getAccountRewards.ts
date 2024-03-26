@@ -11,6 +11,7 @@ import { getStaking } from "./getStaking";
 import { INetTvlFarmRewards } from "../../interfaces";
 import { hasAssets, toUsd } from "../utils";
 import { cloneObj } from "../../helpers/helpers";
+import { standardizeAsset } from "../../utils";
 
 interface IPortfolioReward {
   icon: string;
@@ -447,11 +448,13 @@ export const getAccountDailyRewards = createSelector(
       mergedGainRewards[rewardTokenId] = (mergedGainRewards[rewardTokenId] || 0) - rewardAmount;
     });
     const allRewards = Object.entries(mergedGainRewards).reduce((acc, [tokenId, amount]) => {
+      const assetCopy = JSON.parse(JSON.stringify(assets.data[tokenId] || {}));
+      standardizeAsset(assetCopy.metadata || {});
       return {
         ...acc,
         [tokenId]: {
           amount,
-          asset: assets.data[tokenId],
+          asset: assetCopy,
         },
       };
     }, {});
