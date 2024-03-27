@@ -5,13 +5,11 @@ import { Stat } from "./components";
 import { useUserHealth } from "../../../hooks/useUserHealth";
 import { useAverageAPY } from "../../../hooks/useAverageAPY";
 import { APY_FORMAT, USD_FORMAT } from "../../../store";
-import CustomTooltips from "../../CustomTooltips/CustomTooltips";
 import { useAppSelector } from "../../../redux/hooks";
 import { getAverageSupplyRewardApy } from "../../../redux/selectors/getAverageSuppliedRewardApy";
 import { getAverageBorrowedRewardApy } from "../../../redux/selectors/getAverageBorrowedRewardApy";
 import { getAverageNetRewardApy } from "../../../redux/selectors/getAverageNetRewardApy";
 import { useNonFarmedAssets } from "../../../hooks/hooks";
-import { DoubtIcon } from "../../Icons/Icons";
 import HtmlTooltip from "../../common/html-tooltip";
 import { format_apy } from "../../../utils/uiNumber";
 
