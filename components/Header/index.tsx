@@ -183,7 +183,7 @@ const Links = () => {
       gridTemplateColumns="repeat(4, 1fr)"
       alignItems="center"
       lineHeight="0"
-      sx={{ gap: "32px" }}
+      sx={{ gap: "48px" }}
     >
       <Link
         href="https://twitter.com/burrow_finance"
@@ -219,7 +219,7 @@ const BugBounty = () => {
       <Typography
         fontSize="14px"
         lineHeight="16px"
-        style={{ color: isMobile ? "#6F7188" : "#ffffff" }}
+        style={{ color: isMobile ? "#6F7188" : "#ffffff", letterSpacing: "1px" }}
       >
         Bug Bounty
       </Typography>
@@ -234,7 +234,7 @@ const Github = () => {
       <Typography
         fontSize="14px"
         lineHeight="46px"
-        style={{ color: isMobile ? "#6F7188" : "#ffffff" }}
+        style={{ color: isMobile ? "#6F7188" : "#ffffff", letterSpacing: "1px" }}
       >
         Github
       </Typography>
