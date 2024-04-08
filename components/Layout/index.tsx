@@ -49,7 +49,7 @@ const Layout = ({ children }) => {
           {children}
         </main>
       </PageGrid>
-      <Footer />
+      {/* <Footer /> */}
     </Theme>
   );
 };
