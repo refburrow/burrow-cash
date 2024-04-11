@@ -1,6 +1,5 @@
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import type { WalletSelector } from "@near-wallet-selector/core";
-import { setupNearWallet } from "@near-wallet-selector/near-wallet";
 import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupNightly } from "@near-wallet-selector/nightly";
@@ -92,20 +91,19 @@ export const getWalletSelector = async ({ onAccountChange }: GetWalletSelectorAr
     modules: [
       myNearWallet,
       setupSender() as any,
-      setupNearWallet(),
       setupMeteorWallet(),
       walletConnect,
-      setupHereWallet(),
-      setupNightly(),
-      setupNeth({
-        bundle: false,
-        gas: "300000000000000",
-      }),
       setupNearMobileWallet({
         dAppMetadata: {
           logoUrl: "https://ref-finance-images.s3.amazonaws.com/images/burrowIcon.png",
           name: "NEAR Wallet Selector",
         },
+      }),
+      setupHereWallet(),
+      setupNightly(),
+      setupNeth({
+        bundle: false,
+        gas: "300000000000000",
       }),
       setupKeypom({
         networkId: defaultNetwork,
