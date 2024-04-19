@@ -78,17 +78,15 @@ const Init = () => {
     dispatch(fetchAssets()).then(() => dispatch(fetchRefPrices()));
     dispatch(fetchAccount());
   };
-
+  useEffect(fetchData, []);
   useEffect(() => {
-    console.info("ttest");
     dispatch(fetchConfig());
   }, []);
-  useEffect(fetchData, []);
-  useInterval(fetchData, !isIdle ? REFETCH_INTERVAL : null);
+  // useInterval(fetchData, !isIdle ? REFETCH_INTERVAL : null);
+  useInterval(fetchData, REFETCH_INTERVAL);
 
   return null;
 };
-
 export default function MyApp({ Component, pageProps }: AppProps) {
   const [progress, setProgress] = useState(0);
   const router = useRouter();
