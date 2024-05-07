@@ -34,7 +34,7 @@ const Popup = ({ className }) => {
     return 0;
   }, [needJoinAndClaim, accountId, suppliedRows]);
   useEffect(() => {
-    if (INCENTIVE_POPUP_STATUS === "2") {
+    if (INCENTIVE_POPUP_STATUS === "3") {
       setShow(false);
     } else {
       setShow(true);
@@ -42,7 +42,7 @@ const Popup = ({ className }) => {
   }, [INCENTIVE_POPUP_STATUS]);
   function closePopup() {
     setShow(false);
-    localStorage.setItem("INCENTIVE_POPUP_STATUS", "2");
+    localStorage.setItem("INCENTIVE_POPUP_STATUS", "3");
   }
   function jump(tokenId) {
     window.open(`/tokenDetail/${tokenId}`);
