@@ -59,8 +59,8 @@ const Popup = ({ className }) => {
         <div className="absolute flex items-center content lg:top-[96px] lg:left-[136px] xsm:top-[68px] xsm:left-[134px]">
           <img style={{ width: "22px", marginRight: "4px" }} alt="" src={USDNIcon} />
           <img style={{ width: "22px", marginRight: "4px" }} alt="" src={USDTIcon} />
-          <img style={{ width: "22px", marginRight: "6px" }} alt="" src={FRAXIcon} />
-          <img style={{ width: "22px" }} alt="" src={ETHIcon} />
+          <img style={{ width: "22px", marginRight: "6px" }} alt="" src={ETHIcon} />
+          <img style={{ width: "22px" }} alt="" src={FRAXIcon} />
         </div>
         <div className="absolute content w-[340px] h-[200px] lg:top-[50px] xsm:top-[25px] left-[20px] lg:pl-[22px] pr-[36px] xsm:pl-[22px]">
           {status === 1 ? (
