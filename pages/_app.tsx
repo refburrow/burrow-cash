@@ -47,7 +47,7 @@ ModalReact.defaultStyles = {
 };
 
 ModalReact.setAppElement("#root");
-
+const b = "hell0";
 const SENTRY_ORG = process.env.NEXT_PUBLIC_SENTRY_ORG as string;
 const SENTRY_PID = process.env.NEXT_PUBLIC_SENTRY_PID as unknown as number;
 
